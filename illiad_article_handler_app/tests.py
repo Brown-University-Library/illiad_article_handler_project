@@ -1,6 +1,6 @@
 import logging
 
-# from django.test import TestCase
+# from django.test import TestCase (test commit)
 from django.test import SimpleTestCase as TestCase    ## TestCase requires db, this doesn't
 
 
