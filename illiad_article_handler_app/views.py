@@ -9,32 +9,21 @@ log = logging.getLogger(__name__)
 
 
 def handler(request):
-    """ Truncates long title if necessary, and redirects to JCB Aeon.
-        Possible future TODO...
-        - Add sid (source-id) param in Alma to indicating that the link a JCB or Aeon link.
-        - inspect that, and redirect to proper Aeon instance.
+    """ Creates ILLiad new-user if necessary, then redirects user to ILLiad form.
     """
     log.debug( f'request.GET, ``{pprint.pformat(request.GET)}``' )
     ## Make copy of QueryDict (which is immutable) --------
     params_query_dict_copy = request.GET.copy()  # <https://stackoverflow.com/questions/5036498/django-rebuild-a-query-string-without-one-of-the-variables>
     assert type(params_query_dict_copy) == django.http.request.QueryDict, type(params_query_dict_copy)
     log.debug( f'params_query_dict_copy initially, ``{pprint.pformat(params_query_dict_copy)}``' )
-    ## Truncate title if necessary ------------------------
-    truncated_title = ''
-    if 'ItemTitle' in params_query_dict_copy.keys():
-        title = params_query_dict_copy['ItemTitle']
-        if len( title ) > project_settings.TRUNCATE_LENGTH:
-            len_minus_elipsis = project_settings.TRUNCATE_LENGTH - 3
-            truncated_title = f'{title[0:len_minus_elipsis]}...'
-            params_query_dict_copy['ItemTitle'] = truncated_title
-    log.debug( f'params_query_dict_copy now, ``{pprint.pformat(params_query_dict_copy)}``' )
-    ## Recreate encoded parameter string ------------------
-    encoded_qd = params_query_dict_copy.urlencode()
-    assert type(encoded_qd) == str, type(encoded_qd)
-    log.debug( f'encoded_qd, ``{encoded_qd}``' )
-    ## Redirect to JCB Aeon -------------------------------
-    redirect_url = f'https://jcbl.aeon.atlas-sys.com/aeon.dll?{encoded_qd}'
-    return HttpResponseRedirect( redirect_url )
+    ## check for new ILLiad user
+    ## create new ILLiad user if necessary
+    ## redirect to ILLiad form
+    return HttpResponse( 'handler coming' )
+
+
+def info(request):
+    return HttpResponse( 'info response coming' )
 
 
 ## for developemnt convenience ------------------------------------------------
@@ -55,11 +44,3 @@ def error_check( request ):
 
 def version(request):
     return HttpResponse( 'version response coming' )
-
-
-def version(request):
-    return HttpResponse( 'version response coming' )
-
-
-def info(request):
-    return HttpResponse( 'info response coming' )
