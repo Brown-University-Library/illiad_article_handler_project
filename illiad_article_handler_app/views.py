@@ -10,23 +10,44 @@ log = logging.getLogger(__name__)
 
 def handler(request):
     """ Creates ILLiad new-user if necessary, then redirects user to ILLiad form.
-    """
+        On problem, stores error-message to session and redirects user to problem view. """
     log.debug( f'request.GET, ``{pprint.pformat(request.GET)}``' )
-    ## Make copy of QueryDict (which is immutable) --------
+    ## make copy of QueryDict (which is immutable) --------
     params_query_dict_copy = request.GET.copy()  # <https://stackoverflow.com/questions/5036498/django-rebuild-a-query-string-without-one-of-the-variables>
     assert type(params_query_dict_copy) == django.http.request.QueryDict, type(params_query_dict_copy)
     log.debug( f'params_query_dict_copy initially, ``{pprint.pformat(params_query_dict_copy)}``' )
-    ## check for new ILLiad user
-    ## create new ILLiad user if necessary
-    ## redirect to ILLiad form
-    return HttpResponse( 'handler coming' )
+    ## check for new ILLiad user --------------------------
+    ( good_shib_dct, err ) = shib_helper.prep_shib_dct( request )
+    if err:
+        problem_response = handler_helper.create_problem_response( err, request ); return problem_response
+    ( is_new_user, err ) = new_user_helper.check_new_user_status( shib_dct['eppn'] )
+    if err:
+        problem_response = handler_helper.create_problem_response( err, request ); return problem_response
+    ## create new ILLiad user if necessary ----------------
+    if is_new_user:
+        ( create_result, err ) = new_user_helper.create_new_user( shib_dct )
+        if err:
+            problem_response = handler_helper.create_problem_response( err, request ); return problem_response
+    ## redirect to ILLiad form ----------------------------
+    ( redirect_url, err ) = handler_helper.create_illiad_redirect_url( params_query_dict_copy )
+    if err:
+        problem_response = handler_helper.create_problem_response( err, request ); return problem_response
+    else:
+        return HttpResponseRedirect( redirect_url )
+
+
+def problem( request ):
+    ## retrieve error-message from session.
+    ## clear session
+    ## return problem-page
+    return HttpResponse( 'problem response coming' )
 
 
 def info(request):
     return HttpResponse( 'info response coming' )
 
 
-## for developemnt convenience ------------------------------------------------
+## for development convenience ------------------------------------------------
 
 
 def error_check( request ):
