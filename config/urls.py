@@ -6,6 +6,7 @@ urlpatterns = [
 
     ## main path
     path('handler/', views.handler, name='handler_url'),
+    path( 'message/', views.message, name='message_url' ),  # shows user problem message
 
     ## helper paths
     path('error_check/', views.error_check, name='error_check_url'),

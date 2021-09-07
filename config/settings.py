@@ -122,7 +122,7 @@ LOGGING = {
 
 ## app settings -----------------------------
 
-# TRUNCATE_LENGTH = int( os.environ['ILL_ART_HNDLR__TRUNCATE_LENGTH'] )
+DEV_SHIB_DCT = json.loads( os.environ['ILL_ART_HNDLR__DEV_SHIB_DCT_JSON'] )
 
 
 ## EOF
