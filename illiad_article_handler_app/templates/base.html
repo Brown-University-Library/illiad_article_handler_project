@@ -1,0 +1,84 @@
+{% load static %}
+
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>
+        {% block page_title %}
+        easyBorrow
+        {% endblock page_title %}
+    </title>
+
+    <!-- removing css from head so as to minimize pattern-header conflicts -->
+
+</head>
+
+<body>
+
+    <!-- PATTERN-LIBRARY-HEADER start... -->
+    {{ pattern_header | safe }}
+    <!-- PATTERN-LIBRARY-HEADER end -->
+
+    <link href="{% static 'css/local.css' %}" rel="stylesheet" type="text/css"/>
+    <!-- <link href="{% static 'css/all_search_css_pretty-print.css' %}" rel="stylesheet" type="text/css"/> -->  <!-- TODO: work to get rid of this now that we have the pattern header. -->
+    <script src="{% static 'js/bul_style.js' %}"></script>
+
+    <style type="text/css">
+
+        @import url(//fonts.googleapis.com/css?family=Source+Sans+Pro:400,400italic,700,700italic);
+
+        /*
+        div#bul_pl_logo_text {
+            font-size: 48px;
+        }
+        */
+
+        div#content_wrapper {
+            padding-top: .5em;
+            margin-top: 1em;
+            margin-left: 15%;
+            margin-right: auto;
+            width: 80%;
+        }
+        #content_wrapper h1 {
+            font-family: 'Source Sans Pro', sans-serif;
+            font-size: 36px;
+            font-weight: 400;
+            margin-top: .5em;
+            margin-bottom: 0;
+        }
+
+        div#info_text {
+            font-family: 'Source Sans Pro', sans-serif;
+            margin-top: 1em;
+        }
+
+        div#footer {
+            padding-top: 1em;
+        }
+
+        span#hide {
+            visibility: hidden;
+        }
+    </style>
+
+    {% block extra_css %}
+    {% endblock extra_css %}
+
+    <div id="content_wrapper">
+        {% block content %}
+        {% endblock content %}
+    </div>
+
+    <div id="footer">
+        <hr/>
+    </div>
+
+</body>
+
+</html>

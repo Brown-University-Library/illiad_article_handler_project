@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+
+{% block page_title %}
+easyBorrow
+{% endblock page_title %}
+
+
+{% block extra_css %}
+{% endblock extra_css %}
+
+
+{% block content %}
+
+    {% if submitted_message %}
+        <h1 id="title_heading">easyBorrow &mdash; request received</h1>
+    {% endif %}
+    {% if error_message %}
+        <h1 id="title_heading">easyBorrow &mdash; problem</h1>
+    {% endif %}
+
+
+<div id="info_text">
+
+    {% if submitted_message %}
+        <p>Greetings {{ submitted_message.firstname }} {{ submitted_message.lastname }},</p>
+
+        <p>We're getting the title '{{ submitted_message.title }}' for you. You'll soon receive more information in an email.</p>
+
+        <p>Some information for your records:</p>
+
+        <ul>
+        <li>Title: <i>'{{ submitted_message.title }}'</i></li>
+        <li>Your easyBorrow reference number: <i>'{{ submitted_message.ezb_db_id }}'</i></li>
+        <li>Notification of arrival will be sent to email address: <i>'{{submitted_message.email }}'</i></li>
+        </ul>
+
+        <p>If you have any questions, contact the Library's Interlibrary Loan office at <a href="mailto:interlibrary_loan@brown.edu">interlibrary_loan@brown.edu</a> or call 401-863-2169.</p>
+    {% endif %}
+
+    {% if error_message %}
+        <p>{{ error_message }}</p>
+
+        <p>Please try again in a few minutes.</p>
+
+        <p>If the problem persists, contact the Library's Interlibrary Loan office at <a href="mailto:interlibrary_loan@brown.edu">interlibrary_loan@brown.edu</a> or call 401-863-2169.</p>
+
+    {% endif %}
+
+    <div id="clear"></div>
+
+</div>  <!-- end <div id="info_text"> -->
+
+{% endblock content %}
