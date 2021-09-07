@@ -15,6 +15,7 @@ ALLOWED_HOSTS = json.loads( os.environ['ILL_ART_HNDLR__ALLOWED_HOSTS_JSON'] )  #
 
 INSTALLED_APPS = [
     'django.contrib.contenttypes',
+    'django.contrib.sessions',
     'django.contrib.staticfiles',
     'illiad_article_handler_app'
 ]
@@ -37,7 +38,7 @@ TEMPLATES = [
             'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
+                # 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
         },
@@ -45,6 +46,10 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'config.wsgi.application'
+
+## no db for now
+# db_json = json.loads( os.environ['ILL_ART_HNDLR__DATABASES_JSON'] )
+# DATABASES = db_json
 
 AUTH_PASSWORD_VALIDATORS = [
     {
