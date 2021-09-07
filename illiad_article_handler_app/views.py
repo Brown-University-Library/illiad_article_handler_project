@@ -3,6 +3,7 @@ import logging, pprint
 import django  # for type() test
 from django.conf import settings as project_settings
 from django.http import HttpResponse, HttpResponseRedirect
+from django.shortcuts import render
 from illiad_article_handler_app.lib.shib_handler import Shibber
 from illiad_article_handler_app.lib.view_handler_helper import HandlerHelper
 
@@ -18,12 +19,13 @@ def handler(request):
     params_query_dict_copy = request.GET.copy()  # <https://stackoverflow.com/questions/5036498/django-rebuild-a-query-string-without-one-of-the-variables>
     log.debug( f'params_query_dict_copy, ``{pprint.pformat(params_query_dict_copy)}``' )
     assert type(params_query_dict_copy) == django.http.request.QueryDict, type(params_query_dict_copy)
+    request.session['error_message'] = ''
     ## check for new ILLiad user --------------------------
     shibber = Shibber()
     handler_helper = HandlerHelper()
     ( good_shib_dct, err ) = shibber.prep_shib_dct( request.META, request.get_host() )
     if err:
-        problem_response = handler_helper.create_problem_response( err, request ); return problem_response
+        problem_response = handler_helper.create_problem_response( err ); return problem_response
     ( is_new_user, err ) = new_user_helper.check_new_user_status( shib_dct['eppn'] )
     if err:
         problem_response = handler_helper.create_problem_response( err, request ); return problem_response
@@ -43,23 +45,9 @@ def handler(request):
 def message( request ):
     """ Shows user problem message. """
     log.debug( '\n\nstarting views.message()' )
-    error_message = request.session.get( 'error_message', '' )
-    if error_message:
-        log.debug( 'returning error_message' )
-        # return HttpResponse( message )
-        context = msg_hlpr.build_problem_context( error_message, uu_id )
-        # return render( request, 'easyborrow_depositor_app_templates/message.html', context )
-        return render( request, 'message.html', context )
-    ## prep context -------------------------------
-    ( context, err ) = msg_hlpr.prepare_good_context()
-    log.debug( f'err, ``{err}``' )
-    log.debug( f'context, ``{context}``' )
-    if err:
-        assert type(err) == str
-        return HttpResponse( err )
-    ## return request-submitted message -----------
-    assert type(context) == dict
-    # return render( request, 'easyborrow_depositor_app_templates/message.html', context )
+    error_message = request.GET['problem']
+    log.debug( f'returning error_message, ``{error_message}``' )
+    context = { 'problem': error_message }
     return render( request, 'message.html', context )
 
 

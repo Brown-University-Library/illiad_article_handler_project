@@ -1,6 +1,11 @@
+import logging
 from urllib.parse import quote_plus
 
 from django.http import HttpResponseRedirect
+from django.urls import reverse
+
+
+log = logging.getLogger(__name__)
 
 
 class HandlerHelper():

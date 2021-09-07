@@ -29,7 +29,6 @@ class Shibber():
                         cleaned_meta_dct.pop( key )
                     elif 'wsgi.' in key:
                         cleaned_meta_dct.pop( key )
-
         except:
             err = 'Problem with shibboleth info.'
             log.exception( err )
