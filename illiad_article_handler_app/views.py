@@ -4,6 +4,7 @@ import django  # for type() test
 from django.conf import settings as project_settings
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
+from illiad_article_handler_app.lib import message_helper
 from illiad_article_handler_app.lib.shib_handler import Shibber
 from illiad_article_handler_app.lib.view_handler_helper import HandlerHelper
 
@@ -19,7 +20,7 @@ def handler(request):
     params_query_dict_copy = request.GET.copy()  # <https://stackoverflow.com/questions/5036498/django-rebuild-a-query-string-without-one-of-the-variables>
     log.debug( f'params_query_dict_copy, ``{pprint.pformat(params_query_dict_copy)}``' )
     assert type(params_query_dict_copy) == django.http.request.QueryDict, type(params_query_dict_copy)
-    request.session['error_message'] = ''
+    # request.session['error_message'] = ''
     ## check for new ILLiad user --------------------------
     shibber = Shibber()
     handler_helper = HandlerHelper()
@@ -47,7 +48,8 @@ def message( request ):
     log.debug( '\n\nstarting views.message()' )
     error_message = request.GET['problem']
     log.debug( f'returning error_message, ``{error_message}``' )
-    context = { 'problem': error_message }
+    pattern_header = message_helper.grab_pattern_header(); assert type(pattern_header) == str
+    context = { 'problem': error_message, 'pattern_header': pattern_header }
     return render( request, 'message.html', context )
 
 
