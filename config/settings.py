@@ -15,13 +15,14 @@ ALLOWED_HOSTS = json.loads( os.environ['ILL_ART_HNDLR__ALLOWED_HOSTS_JSON'] )  #
 
 INSTALLED_APPS = [
     'django.contrib.contenttypes',
-    'django.contrib.sessions',
+    # 'django.contrib.sessions',
     'django.contrib.staticfiles',
     'illiad_article_handler_app'
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    # 'django.contrib.sessions.middleware.SessionMiddleware',   # requires db
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -128,6 +129,9 @@ LOGGING = {
 ## app settings -----------------------------
 
 DEV_SHIB_DCT = json.loads( os.environ['ILL_ART_HNDLR__DEV_SHIB_DCT_JSON'] )
+
+PATTERNLIB_HEADER_CACHE_TIMEOUT = int( os.environ['ILL_ART_HNDLR__PATTERNLIB_HEADER_CACHE_TIMEOUT_IN_HOURS'] ) * 60 * 60
+PATTERNLIB_HEADER_URL = os.environ['ILL_ART_HNDLR__PATTERNLIB_HEADER_URL']
 
 
 ## EOF
