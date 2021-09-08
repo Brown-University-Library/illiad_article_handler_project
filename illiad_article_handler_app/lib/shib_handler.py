@@ -1,4 +1,4 @@
-import logging
+import logging, pprint
 from django.conf import settings
 
 
@@ -12,11 +12,23 @@ class Shibber():
 
     def prep_shib_dct( self, request_meta_dct, host ):
         """ Returns dct from shib-info.
-            Called by ConfReqHlpr.save_patron_info() """
-        log.debug( 'starting prep_shib_dct()' )
+            Called by views.handler() """
+        log.debug( 'starting manager-def' )
+        ( shib_dct, err ) = ( {}, '' )
+        ( cleaned_meta_dct, err ) = self.clean_meta_dct( request_meta_dct, host )
+        if err:
+            log.debug( f'returning err, ``{err}``' )
+            return ( shib_dct, err )
+        ( shib_dct, err ) = self.validate_shib_dct( shib_dct )
+        log.debug( 'returning from manager-def' )
+        return ( shib_dct, err )
+
+    def clean_meta_dct( request_meta_dct ):
+        """ Returns dct from shib-info.
+            Called by prep_shib_dct() """
+        log.debug( 'starting clean_meta_dct()' )
         ( cleaned_meta_dct, err ) = ( {}, '' )
         try:
-            1/0
             assert type(request_meta_dct) == dict
             assert type(host) == str
             if host == '127.0.0.1' or host == '127.0.0.1:8000' or host == 'testserver':
@@ -30,9 +42,30 @@ class Shibber():
                     elif 'wsgi.' in key:
                         cleaned_meta_dct.pop( key )
         except:
-            err = 'Problem with shibboleth info.'
+            err = 'problem with shibboleth info'
             log.exception( err )
-        log.debug( f'cleaned_meta_dct, ``{cleaned_meta_dct}``' )
-        log.debug( f'err, ``{err}``' )
+        log.debug( f'cleaned_meta_dct, ``{pprint.pformat(cleaned_meta_dct)}``; err, ``{err}``' )
         return ( cleaned_meta_dct, err )
+
+    def validate_shib_dct( self, shib_dct ):
+        """ Checks that minimal info for ILLiad is present.
+            Called by prep_shib_dct() """
+        ( shib_dct, err ) = ( shib_dct, '' )
+        try:
+            assert type(shib_dct) == dict
+            if 'Shibboleth-eppn' not in shib_dct.keys():
+                err = 'missing `eppn` (`authID`)'
+            elif 'Shibboleth-mail' not in shib_dct.keys():
+                err = 'missing `email`'
+        except:
+            err = 'problem validating shib info'
+            log.exception( err )
+        log.debug( f'shib_dct, ``{pprint.pformat(shib_dct)}``; err, ``{err}``' )
+        return ( shib_dct, err )
+
+
+
+
+
+
 

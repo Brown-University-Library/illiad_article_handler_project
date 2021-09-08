@@ -27,7 +27,7 @@ def handler(request):
     ( good_shib_dct, err ) = shibber.prep_shib_dct( request.META, request.get_host() )
     if err:
         problem_response = handler_helper.create_problem_response( err ); return problem_response
-    ( is_new_user, err ) = new_user_helper.check_new_user_status( shib_dct['eppn'] )
+    ( is_new_user, err ) = illiad_helper.check_new_user_status( shib_dct['eppn'] )
     if err:
         problem_response = handler_helper.create_problem_response( err, request ); return problem_response
     ## create new ILLiad user if necessary ----------------
