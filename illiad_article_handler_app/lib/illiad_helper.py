@@ -1,48 +1,72 @@
 
 import datetime, json, logging, os, pprint
+
 import requests
-from easyborrow_controller_code import settings
+from django.conf import settings
 
 
-## file and web-loggers
-LOG_PATH = settings.LOG_PATH
-LOG_LEVEL = settings.LOG_LEVEL
-level_dct = { 'DEBUG': logging.DEBUG, 'INFO': logging.INFO }
-logging.basicConfig(
-    filename=LOG_PATH, level=level_dct[LOG_LEVEL],
-    format='[%(asctime)s] %(levelname)s [%(module)s-%(funcName)s()::%(lineno)d] %(message)s', datefmt='%d/%b/%Y %H:%M:%S' )
 log = logging.getLogger(__name__)
 
 
 class IlliadUserManager( object ):
     """ Contains helpers for delivery.views.process_request()
-        TODO, move article-requet checks to here, too. """
+        TODO, refactor to newer ( value, err ) pattern. """
 
     def __init__(self):
         pass
 
+    # def manage_illiad_user_check( self, usr_dct ):
+    #     """ Manager for illiad handling.
+    #         - hits the new illiad-api for the status (`blocked`, `registered`, etc)
+    #             # - if problem, prepares failure message as-is (creating return-dct)
+    #             - if new-user, runs manage_new_user() and creates proper success or failure return-dct
+    #             # - if neither problem or new-user, TODO -- incorporate the new update-status api call here
+    #         Called by delivery.views.process_request()...
+    #           # ...which, on any failure, will store the returned crafted error message to the session,
+    #           # ...and redirect to an error page. """
+    #     # log.debug( '(common_classes) - usr_dct, ```%s```' % pprint.pformat(usr_dct) )
+    #     log.debug( 'usr_dct, ``%s``' % pprint.pformat(usr_dct) )
+    #     illiad_status_dct = self.check_illiad_status( usr_dct['eppn'].split('@')[0] )
+    #     log.debug( 'illiad_status_dct, ``%s``' % illiad_status_dct )
+    #     if illiad_status_dct['response']['status_data']['blocked'] is True or illiad_status_dct['response']['status_data']['disavowed'] is True:
+    #         # return_dct = self.make_illiad_problem_message( usr_dct, title )
+    #         log.warning( 'blocked or disavowed status detected' )
+    #     elif illiad_status_dct['response']['status_data']['interpreted_new_user'] is True:
+    #         return_dct = self.manage_new_user( usr_dct )
+    #     else:
+    #         return_dct = { 'success': True }
+    #     log.debug( 'return_dct, ```%s```' % pprint.pformat(return_dct) )
+    #     return return_dct
+
     def manage_illiad_user_check( self, usr_dct ):
         """ Manager for illiad handling.
             - hits the new illiad-api for the status (`blocked`, `registered`, etc)
-                # - if problem, prepares failure message as-is (creating return-dct)
                 - if new-user, runs manage_new_user() and creates proper success or failure return-dct
-                # - if neither problem or new-user, TODO -- incorporate the new update-status api call here
-            Called by delivery.views.process_request()...
-              # ...which, on any failure, will store the returned crafted error message to the session,
-              # ...and redirect to an error page. """
-        # log.debug( '(common_classes) - usr_dct, ```%s```' % pprint.pformat(usr_dct) )
-        log.debug( 'usr_dct, ``%s``' % pprint.pformat(usr_dct) )
-        illiad_status_dct = self.check_illiad_status( usr_dct['eppn'].split('@')[0] )
-        log.debug( 'illiad_status_dct, ``%s``' % illiad_status_dct )
-        if illiad_status_dct['response']['status_data']['blocked'] is True or illiad_status_dct['response']['status_data']['disavowed'] is True:
-            # return_dct = self.make_illiad_problem_message( usr_dct, title )
-            log.warning( 'blocked or disavowed status detected' )
-        elif illiad_status_dct['response']['status_data']['interpreted_new_user'] is True:
-            return_dct = self.manage_new_user( usr_dct )
-        else:
-            return_dct = { 'success': True }
-        log.debug( 'return_dct, ```%s```' % pprint.pformat(return_dct) )
-        return return_dct
+            Called by views.handler()...
+            TODO: refactor to more modern ( value, err ) pattern.
+            """
+        err = ''
+        try:
+            log.debug( 'usr_dct, ``%s``' % pprint.pformat(usr_dct) )
+            illiad_status_dct = self.check_illiad_status( usr_dct['eppn'].split('@')[0] )
+            log.debug( 'illiad_status_dct, ``%s``' % illiad_status_dct )
+            if illiad_status_dct['response']['status_data']['blocked'] is True or illiad_status_dct['response']['status_data']['disavowed'] is True:
+                # log.warning( 'blocked or disavowed status detected' )
+                err = 'problem with ILLiad status'
+                return err
+            elif illiad_status_dct['response']['status_data']['interpreted_new_user'] is True:
+                return_dct = self.manage_new_user( usr_dct )
+            else:
+                return_dct = { 'success': True }
+            log.debug( 'return_dct, ```%s```' % pprint.pformat(return_dct) )
+            return return_dct
+        except:
+            err = 'problem with ILLiad new-user check'
+            log.exception( err )
+        log.debug( f'err, ``{err}``' )
+        return err
+
+
 
     def check_illiad_status( self, auth_id ):
         """ Hits our internal illiad-api for user's status (`blocked`, `registered`, etc).
