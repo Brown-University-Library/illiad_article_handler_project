@@ -14,14 +14,18 @@ class Shibber():
         """ Returns dct from shib-info.
             Called by views.handler() """
         log.debug( 'starting manager-def' )
-        ( shib_dct, err ) = ( {}, '' )
+        ( user_dct, err ) = ( {}, '' )
         ( cleaned_meta_dct, err ) = self.clean_meta_dct( request_meta_dct, host )
         if err:
             log.debug( f'returning err, ``{err}``' )
-            return ( shib_dct, err )
+            return ( user_dct, err )
         ( shib_dct, err ) = self.validate_shib_dct( cleaned_meta_dct )
+        if err:
+            log.debug( f'returning err, ``{err}``' )
+            return ( user_dct, err )
+        user_dct = self.make_user_dct( shib_dct )
         log.debug( 'returning from manager-def' )
-        return ( shib_dct, err )
+        return ( user_dct, err )
 
     def clean_meta_dct( self, request_meta_dct, host ):
         """ Returns dct from shib-info.
@@ -62,5 +66,19 @@ class Shibber():
             log.exception( err )
         log.debug( f'shib_dct, ``{pprint.pformat(shib_dct)}``; err, ``{err}``' )
         return ( shib_dct, err )
+
+    def make_user_dct( self, shib_dct ):
+        assert type(shib_dct) == dict
+        user_dct = {
+            'eppn': shib_dct['Shibboleth-eppn'],
+            'email': shib_dct['Shibboleth-mail'],
+            'first_name': shib_dct.get( 'Shibboleth-givenName', '' ),
+            'last_name': shib_dct.get( 'Shibboleth-sn', '' ),
+            'brown_type': shib_dct.get( 'Shibboleth-brownType', '' ),
+            'phone': shib_dct.get( 'Shibboleth-phone', '' ),
+            'department': shib_dct.get( 'Shibboleth-department', '' )
+            }
+        log.debug( f'user_dct, ``{pprint.pformat(user_dct)}``' )
+        return user_dct
 
     ## end class Shibber()
