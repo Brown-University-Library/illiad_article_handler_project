@@ -19,11 +19,11 @@ class Shibber():
         if err:
             log.debug( f'returning err, ``{err}``' )
             return ( shib_dct, err )
-        ( shib_dct, err ) = self.validate_shib_dct( shib_dct )
+        ( shib_dct, err ) = self.validate_shib_dct( cleaned_meta_dct )
         log.debug( 'returning from manager-def' )
         return ( shib_dct, err )
 
-    def clean_meta_dct( request_meta_dct ):
+    def clean_meta_dct( self, request_meta_dct, host ):
         """ Returns dct from shib-info.
             Called by prep_shib_dct() """
         log.debug( 'starting clean_meta_dct()' )
@@ -63,9 +63,4 @@ class Shibber():
         log.debug( f'shib_dct, ``{pprint.pformat(shib_dct)}``; err, ``{err}``' )
         return ( shib_dct, err )
 
-
-
-
-
-
-
+    ## end class Shibber()
