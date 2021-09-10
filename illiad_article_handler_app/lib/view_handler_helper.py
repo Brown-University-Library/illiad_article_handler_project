@@ -1,6 +1,8 @@
-import logging
+import logging, pprint
 from urllib.parse import quote_plus
 
+import django  # for type-check
+from django.conf import settings
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 
@@ -22,12 +24,15 @@ class HandlerHelper():
         rsp = HttpResponseRedirect( redirect_url )
         return rsp
 
-    def create_illiad_redirect_url( self ):
+    def create_illiad_redirect_url( self, params_query_dict_copy ):
         """ Creates redirect url to ILLiad.
             Called by views.handler() """
         ( redirect_url, err ) = ( '', '' )
         try:
-            1/0
+            assert type(params_query_dict_copy) == django.http.request.QueryDict, type(params_query_dict_copy)
+            encoded_qd = params_query_dict_copy.urlencode()
+            log.debug( f'encoded_qd, ``{encoded_qd}``' )
+            redirect_url = f'{settings.ILLIAD_PUBLIC_URL_ROOT}?{encoded_qd}'
         except:
             err = 'problem preparing ILLiad redirect'
             log.exception( err )

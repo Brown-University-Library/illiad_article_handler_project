@@ -48,10 +48,12 @@ log = logging.getLogger(__name__)
 def handler(request):
     """ Creates ILLiad new-user if necessary, then redirects user to ILLiad form.
         On problem, stores error-message to session and redirects user to problem view. """
-    log.debug( f'request.GET, ``{pprint.pformat(request.GET)}``' )
+    log.debug( f'request.__dict__, ``{pprint.pformat(request.__dict__)}``' )
+    log.debug( f'request.GET pretty-printed, ``{pprint.pformat(request.GET)}``' )
+    log.debug( f'request.GET raw, ``{request.GET}``' )
     ## setup ----------------------------------------------
     params_query_dict_copy = request.GET.copy()  # <https://stackoverflow.com/questions/5036498/django-rebuild-a-query-string-without-one-of-the-variables>
-    log.debug( f'params_query_dict_copy, ``{pprint.pformat(params_query_dict_copy)}``' )
+    # log.debug( f'params_query_dict_copy, ``{pprint.pformat(params_query_dict_copy)}``' )
     assert type(params_query_dict_copy) == django.http.request.QueryDict, type(params_query_dict_copy)
     ## check for, and handle, new ILLiad user --------------------------
     shibber = Shibber()
