@@ -21,3 +21,15 @@ class HandlerHelper():
         log.debug( f'redirecting to message url, ``{redirect_url}``' )
         rsp = HttpResponseRedirect( redirect_url )
         return rsp
+
+    def create_illiad_redirect_url( self ):
+        """ Creates redirect url to ILLiad.
+            Called by views.handler() """
+        ( redirect_url, err ) = ( '', '' )
+        try:
+            1/0
+        except:
+            err = 'problem preparing ILLiad redirect'
+            log.exception( err )
+        log.debug( f'redirect_url, ``{pprint.pformat(redirect_url)}``; err, ``{err}``' )
+        return ( redirect_url, err )
