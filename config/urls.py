@@ -5,7 +5,7 @@ from django.urls import path
 urlpatterns = [
 
     ## main path
-    path('handler/', views.handler, name='handler_url'),
+    path('openurl/', views.handler, name='openurl_url'),
     path( 'message/', views.message, name='message_url' ),  # shows user problem message
 
     ## helper paths
