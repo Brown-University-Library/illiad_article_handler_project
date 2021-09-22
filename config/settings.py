@@ -98,12 +98,12 @@ LOGGING = {
             'class': 'django.utils.log.AdminEmailHandler',
             'include_html': True,
         },
-        # 'logfile': {
-        #     'level':'DEBUG',
-        #     'class':'logging.FileHandler',  # note: configure server to use system's log-rotate to avoid permissions issues
-        #     'filename': os.environ.['ILL_ART_HNDLR__LOG_PATH'],
-        #     'formatter': 'standard',
-        # },
+        'logfile': {
+            'level':'DEBUG',
+            'class':'logging.FileHandler',  # note: configure server to use system's log-rotate to avoid permissions issues
+            'filename': os.environ['ILL_ART_HNDLR__LOG_PATH'],
+            'formatter': 'standard',
+        },
         'console':{
             'level':'DEBUG',
             'class':'logging.StreamHandler',
@@ -118,8 +118,8 @@ LOGGING = {
             },
         'illiad_article_handler_app': {
             # 'handlers': ['logfile', 'console'],  # leaving here as reminder that this is how to show output in the terminal
-            # 'handlers': ['logfile'],
-            'handlers': ['console'],
+            'handlers': ['logfile'],
+            # 'handlers': ['console'],
             'level': os.environ['ILL_ART_HNDLR__LOG_LEVEL'],
             'propagate': False
         },
