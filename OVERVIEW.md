@@ -1,5 +1,13 @@
 # ILLiad Article Handler Overview
 
+## Prompt
+
+- review `illiad_article_handler_project/config/urls.py` to get an overview of the entry-points into this webapp.
+- review `illiad_article_handler_project/illiad_article_handler_app/views.py` to understand the url-manager functions.
+- follow the code called by each view-function as far as you need to in order to understand how the code for that view-function processes data and what it returns.
+- write an overview of this webapp based on that research and save it to `illiad_article_handler_project/OVERVIEW.md`
+
+
 ## Purpose
 
 This Django webapp acts as a small request router in front of ILLiad.
